@@ -6,10 +6,13 @@
 use bevy::prelude::*;
 use bevy::sprite::{MaterialMesh2dBundle, Mesh2dHandle};
 
+const SPEED: f32 = 150.0;
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
+        .add_systems(Update, move_piece)
         .run();
 }
 
@@ -20,24 +23,26 @@ enum Direction {
 
 /// setup includes all the things that have to be loaded
 /// exactly once at the beginning of the program.
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
+fn setup(mut commands: Commands, mut asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
-
-    let shape = Mesh2dHandle(meshes.add(Rectangle::new(50.0, 50.0)));
-    commands.spawn( MaterialMesh2dBundle {
-        mesh: shape,
-        material: materials.add(Color::PURPLE),
-        transform: Transform::from_xyz(100.0, 0.0, 0.0),
-        ..default()
-    });
+    commands.spawn(
+        SpriteBundle {
+            texture: asset_server.load("tetris3.png"),
+            transform: Transform::from_xyz(100., 0., 0.),
+            ..default()
+        });
 }
 
+/// Moves the pieces vertically down the screen.
 fn move_piece(
     time: Res<Time>,
+    mut sprite_position: Query<(&mut Direction, &mut Transform)>
 ) {
+   for (mut piece, mut transform) in &mut sprite_position {
+       match *piece {
+           Direction::Down => transform.translation.y -= SPEED * time.delta_seconds(),
+       }
 
+       *piece = Direction::Down;
+   }
 }
