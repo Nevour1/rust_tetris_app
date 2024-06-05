@@ -4,45 +4,81 @@
 //! Author: Rouven Schoenigt
 
 use bevy::prelude::*;
-use bevy::sprite::{MaterialMesh2dBundle, Mesh2dHandle};
+use bevy::window::PrimaryWindow;
+use bevy::input;
 
-const SPEED: f32 = 150.0;
+pub const SPEED: f32 = 75.0;
+pub const PLAYER_SIZE: f32 = 10.0;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, setup)
-        .add_systems(Update, move_piece)
+        .add_systems(Startup, (spawn_camera, spawn_pieces))
+        .add_systems(Update, (move_piece, confine_move_piece))
         .run();
 }
 
 #[derive(Component)]
-enum Direction {
-    Down,
+pub struct Piece {}
+
+pub fn spawn_camera(mut commands: Commands, 
+    window_query: Query<&Window, With<PrimaryWindow>>
+) {
+    let window = window_query.get_single().unwrap();
+
+    commands.spawn(Camera2dBundle {
+        transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
+        ..default()
+    });
 }
 
-/// setup includes all the things that have to be loaded
-/// exactly once at the beginning of the program.
-fn setup(mut commands: Commands, mut asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2dBundle::default());
-    commands.spawn(
+pub fn spawn_pieces(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    commands.spawn((
         SpriteBundle {
             texture: asset_server.load("tetris3.png"),
-            transform: Transform::from_xyz(100., 0., 0.),
+            transform: Transform::from_xyz(0., window.height(), 0.),
             ..default()
-        });
+        },
+        Piece {},
+    ));
 }
 
-/// Moves the pieces vertically down the screen.
-fn move_piece(
+pub fn move_piece(
+    // keyboard_input: Res<Input<KeyCode>>,
+    mut piece_query: Query<&mut Transform, With<Piece>>,
     time: Res<Time>,
-    mut sprite_position: Query<(&mut Direction, &mut Transform)>
 ) {
-   for (mut piece, mut transform) in &mut sprite_position {
-       match *piece {
-           Direction::Down => transform.translation.y -= SPEED * time.delta_seconds(),
-       }
+    if let Ok(mut transform) = piece_query.get_single_mut() {
+        let direction = Vec3::new(0., -1., 0.);
 
-       *piece = Direction::Down;
-   }
+        transform.translation += direction * SPEED * time.delta_seconds(); 
+    }
+}
+
+pub fn confine_move_piece(
+    mut piece_query: Query<&mut Transform, With<Piece>>,
+    window_query: Query<&Window, With<PrimaryWindow>>
+) {
+    if let Ok(mut piece_transform) = piece_query.get_single_mut() {
+        let window = window_query.get_single().unwrap();
+
+        let y_bottom = 30.0 + PLAYER_SIZE;
+        let y_top = window.height() + PLAYER_SIZE;
+        
+        let mut translation = piece_transform.translation;
+
+        if translation.y < y_bottom {
+            translation.y = y_bottom;
+        } else if translation.y > y_top {
+            translation.y = y_top;
+        }
+
+        piece_transform.translation = translation;
+    }
 }
