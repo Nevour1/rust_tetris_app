@@ -5,7 +5,7 @@
 
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use bevy::input;
+//use bevy::input;
 
 pub const SPEED: f32 = 75.0;
 pub const PLAYER_SIZE: f32 = 10.0;
@@ -13,7 +13,7 @@ pub const PLAYER_SIZE: f32 = 10.0;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, (spawn_camera, spawn_pieces))
+        .add_systems(Startup, (spawn_camera, /*spawn_pieces*/))
         .add_systems(Update, (move_piece, confine_move_piece))
         .run();
 }
@@ -32,22 +32,22 @@ pub fn spawn_camera(mut commands: Commands,
     });
 }
 
-pub fn spawn_pieces(
-    mut commands: Commands,
-    window_query: Query<&Window, With<PrimaryWindow>>,
-    asset_server: Res<AssetServer>,
-) {
-    let window = window_query.get_single().unwrap();
+// pub fn spawn_pieces(
+//     mut commands: Commands,
+//     window_query: Query<&Window, With<PrimaryWindow>>,
+//     asset_server: Res<AssetServer>,
+// ) {
+//     let window = window_query.get_single().unwrap();
 
-    commands.spawn((
-        SpriteBundle {
-            texture: asset_server.load("tetris3.png"),
-            transform: Transform::from_xyz(0., window.height(), 0.),
-            ..default()
-        },
-        Piece {},
-    ));
-}
+//     commands.spawn((
+//         SpriteBundle {
+//             texture: asset_server.load("tetris3.png"),
+//             transform: Transform::from_xyz(0., window.height(), 0.),
+//             ..default()
+//         },
+//         Piece {},
+//     ));
+// }
 
 pub fn move_piece(
     // keyboard_input: Res<Input<KeyCode>>,
