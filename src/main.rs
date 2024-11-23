@@ -13,14 +13,9 @@ const _SPEED: f32 = 150.0;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, (setup, spawn::spawn_square))
-        /* .add_systems(Update, move_piece) */
+        .add_systems(Startup, setup)
+        .add_systems(Update, spawn::build_purple_pices)
         .run();
-}
-
-#[derive(Component)]
-enum _Direction {
-    Down,
 }
 
 /// setup includes all the things that have to be loaded
