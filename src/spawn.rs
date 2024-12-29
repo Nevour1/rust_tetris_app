@@ -64,9 +64,9 @@ pub fn spawn_piece(mut commands: Commands,
 /// [][][][]
 /// []  []
 ///
-pub fn build_purple_pices(mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+pub fn build_purple_pieces(mut commands: Commands,
+                           mut meshes: ResMut<Assets<Mesh>>,
+                           mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let squares = Mesh2dHandle(meshes.add(Rectangle::new(SQUARE_LENGTH, SQUARE_LENGTH))); // Square 50x50 pix
     //let spawn_point = Transform::from_xyz(X_ORIGEN + 55. * i as f32,Y_ORIGEN,0.);

@@ -13,7 +13,7 @@ const _SPEED: f32 = 150.0;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, (setup, spawn::build_purple_pices, /*spawn::build_blue_pice*/))
+        .add_systems(Startup, (setup, spawn::build_purple_pieces, /*spawn::build_blue_pice*/))
         .add_systems(Update, spawn::move_pice)
         .run();
 }
