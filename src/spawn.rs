@@ -3,9 +3,12 @@ use bevy::{prelude::*,
     sprite::{MaterialMesh2dBundle, Mesh2dHandle}
 };
 
+mod pice_shape;
+
 const X_ORIGEN: f32 = 0.0;
 const Y_ORIGEN: f32 = 250.0;
 const MOVE_SPEED: f32 = 40.0;
+const SQUARE_LENGTH: f32 = 20.0;
 
 #[derive(Component)]
 pub enum Direction {
@@ -15,8 +18,37 @@ pub enum Direction {
     Right
 }
 
-// This might be reduandent now.
-pub fn spawn_square(mut commands: Commands,
+#[derive(Default, Component)]
+struct Pice;
+
+#[derive(Component)]
+struct Shape {
+    
+}
+
+
+#[derive(Default, Component)]
+enum Colors {
+    Blue,
+    Green,
+    Yellow,
+    Purple,
+    #[default] White,
+}
+
+#[derive(Component)]
+struct PiceBundle {
+    // Also a placeholder!
+    kind: Pice,
+    shape: Shape,
+    color: Colors,
+    position: String,
+}
+
+/// This function should get all the information to build every
+/// pice from some other function such as build_purple_pices.
+/// TODO:
+pub fn spawn_pice(mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
@@ -28,19 +60,23 @@ pub fn spawn_square(mut commands: Commands,
     });
 }
 
-/// This Functions builds the purple tetrisw pice. 
+/// This Functions builds the purple tetris pice.
+/// 
+/// [][][][]
+/// []  []
+///
 pub fn build_purple_pices(mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let squares = Mesh2dHandle(meshes.add(Rectangle::new(50., 50.))); // Square 50x50 pix
+    let squares = Mesh2dHandle(meshes.add(Rectangle::new(SQUARE_LENGTH, SQUARE_LENGTH))); // Square 50x50 pix
     //let spawn_point = Transform::from_xyz(X_ORIGEN + 55. * i as f32,Y_ORIGEN,0.);
 
     for i in 1..5  {  // Spwan 4 square 2D meshes
         commands.spawn((MaterialMesh2dBundle{
            mesh: squares.clone(),
            transform: Transform::from_xyz(
-               X_ORIGEN + 55. * i as f32,
+               X_ORIGEN + (SQUARE_LENGTH + (SQUARE_LENGTH/5.)) * i as f32,
                Y_ORIGEN,
                0.),
            material: materials.add(Color::PURPLE),
@@ -49,12 +85,12 @@ pub fn build_purple_pices(mut commands: Commands,
         Direction::Down
         ));
         
-        if i == 1 || i == 3 {
+        if i == 1 || i == 3 { // This adds the two squares in the lower line.
             commands.spawn((MaterialMesh2dBundle{
                 mesh: squares.clone(),
                 transform: Transform::from_xyz(
-                    X_ORIGEN + 55. * i as f32,
-                    Y_ORIGEN - 55.,
+                    X_ORIGEN + (SQUARE_LENGTH + (SQUARE_LENGTH/5.)) * i as f32,
+                    Y_ORIGEN - (SQUARE_LENGTH + (SQUARE_LENGTH/5.)),
                     0.0),
                 material: materials.add(Color::PURPLE),
                 ..default()
@@ -63,7 +99,7 @@ pub fn build_purple_pices(mut commands: Commands,
             ));
         }
     }
-} // build_purple_pice
+} // build_purple_pices
 
 /// Move the pices down the screen.
 pub fn move_pice(time: Res<Time>, mut square_positions: Query<(&mut Direction, &mut Transform)>) {
