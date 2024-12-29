@@ -1,9 +1,9 @@
-//! Spawns Tetris Pices
+//! Spawns Tetris Pieces
 use bevy::{prelude::*, 
     sprite::{MaterialMesh2dBundle, Mesh2dHandle}
 };
 
-mod pice_shape;
+mod piece_shape;
 
 const X_ORIGEN: f32 = 0.0;
 const Y_ORIGEN: f32 = 250.0;
@@ -19,13 +19,12 @@ pub enum Direction {
 }
 
 #[derive(Default, Component)]
-struct Pice;
+struct Piece;
 
 #[derive(Component)]
 struct Shape {
     
 }
-
 
 #[derive(Default, Component)]
 enum Colors {
@@ -39,7 +38,7 @@ enum Colors {
 #[derive(Component)]
 struct PiceBundle {
     // Also a placeholder!
-    kind: Pice,
+    kind: Piece,
     shape: Shape,
     color: Colors,
     position: String,
@@ -47,10 +46,10 @@ struct PiceBundle {
 
 /// This function should get all the information to build every
 /// pice from some other function such as build_purple_pices.
-/// TODO:
-pub fn spawn_pice(mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+/// TODO: Make spawn all kinds of pieces
+pub fn spawn_piece(mut commands: Commands,
+                   mut meshes: ResMut<Assets<Mesh>>,
+                   mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(MaterialMesh2dBundle {
       mesh: meshes.add(Rectangle::default()).into(),
@@ -60,7 +59,7 @@ pub fn spawn_pice(mut commands: Commands,
     });
 }
 
-/// This Functions builds the purple tetris pice.
+/// This Functions builds the purple tetris piece.
 /// 
 /// [][][][]
 /// []  []

@@ -1,5 +1,5 @@
-//! This module declares the shapes of each pice.
-//! Defines the shape of the tetris pice by using
+//! This module declares the shapes of each piece.
+//! Defines the shape of the tetris piece by using
 //! a 4x5 "Matrix". The '1' is a filed filled with
 //! a square the '0' is an empty files.
 
